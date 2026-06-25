@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mas Motas Pet Shop 🐾</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #7B2D8B;
+            --purple2: #9B4DCA;
+            --purple-light: #f3e8ff;
+            --orange: #F47B20;
+            --orange2: #FF9A45;
+            --orange-light: #fff3e0;
+            --yellow: #FFD600;
+            --green: #4CAF50;
+            --blue: #2196F3;
+            --pink: #E91E8C;
+            --bg: #FFF9F0;
+            --text: #2d1b4e;
+            --text2: #7c6090;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pantalla { width: 100%; max-width: 480px; display: none; flex-direction: column; align-items: center; padding: 0 0 60px; }
+        .pantalla.activa { display: flex; }
+
+        /* ── HEADER ── */
+        .header {
+            width: 100%;
+            background: linear-gradient(160deg, var(--purple) 0%, #5B1A7A 60%, #3d0060 100%);
+            padding: 28px 20px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-patas {
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.07;
+        }
+        .header-patas.p1 { top: -10px; left: -20px; transform: rotate(-20deg); }
+        .header-patas.p2 { bottom: -10px; right: -15px; transform: rotate(15deg); }
+        .header-logo {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--orange);
+            box-shadow: 0 0 0 4px rgba(255,154,69,0.3), 0 8px 24px rgba(0,0,0,0.3);
+            margin-bottom: 12px;
+            position: relative; z-index: 1;
+        }
+        .header-nombre {
+            font-weight: 900;
+            font-size: 30px;
+            color: white;
+            text-align: center;
+            line-height: 1;
+            position: relative; z-index: 1;
+        }
+        .header-nombre span { color: var(--orange2); }
+        .header-sub {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            position: relative; z-index: 1;
+        }
+        .header-slogan {
+            margin-top: 12px;
+            background: var(--orange);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            padding: 6px 20px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(244,123,32,0.4);
+            position: relative; z-index: 1;
+        }
+
+        /* ── BIENVENIDA ── */
+        .bienvenida {
+            width: calc(100% - 32px);
+            margin: 16px 16px 0;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 6px 20px rgba(244,123,32,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .bienvenida::after {
+            content: '🐾';
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.12;
+            right: -10px;
+            bottom: -10px;
+        }
+        .bienvenida-emoji { font-size: 50px; flex-shrink: 0; }
+        .bienvenida-txt { flex: 1; }
+        .bienvenida-titulo { font-size: 16px; font-weight: 900; color: white; line-height: 1.3; margin-bottom: 4px; }
+        .bienvenida-desc { font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 600; line-height: 1.5; }
+
+        /* ── SECCIÓN TÍTULO ── */
+        .seccion-header { width: 100%; padding: 20px 16px 10px; display: flex; align-items: center; gap: 10px; }
+        .seccion-titulo { font-size: 16px; font-weight: 900; color: var(--purple); }
+        .seccion-emoji { font-size: 20px; }
+        .seccion-linea { flex: 1; height: 3px; background: linear-gradient(to right, var(--orange), var(--yellow), transparent); border-radius: 4px; }
+
+        /* ── GRID CATEGORÍAS ── */
+        .grid-cats {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; width: calc(100% - 32px); margin: 0 16px;
+        }
+        .cat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 12px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            border-radius: 20px 20px 0 0;
+        }
+        .cat-card.c1::before { background: linear-gradient(to right, var(--orange), var(--yellow)); }
+        .cat-card.c2::before { background: linear-gradient(to right, var(--purple), var(--purple2)); }
+        .cat-card.c3::before { background: linear-gradient(to right, var(--green), #81C784); }
+        .cat-card.c4::before { background: linear-gradient(to right, var(--blue), #64B5F6); }
+        .cat-card.c5::before { background: linear-gradient(to right, var(--pink), #F48FB1); }
+        .cat-card.c6::before { background: linear-gradient(to right, #FF5722, #FF8A65); }
+        .cat-card.c7::before { background: linear-gradient(to right, #009688, #4DB6AC); }
+        .cat-card.c8::before { background: linear-gradient(to right, var(--purple), var(--orange)); }
+        .cat-card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .cat-emoji { font-size: 40px; margin-top: 4px; }
+        .cat-nombre { font-size: 12px; font-weight: 900; color: var(--text); line-height: 1.3; }
+        .cat-cantidad { font-size: 10px; font-weight: 700; color: var(--text2); background: var(--purple-light); padding: 2px 8px; border-radius: 10px; }
+
+        /* ── BOTÓN WHATSAPP GRANDE ── */
+        .ws-grande {
+            width: calc(100% - 32px);
+            margin: 20px 16px 0;
+            background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(37,211,102,0.35);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .ws-grande:active { transform: scale(0.97); }
+        .ws-icono { font-size: 44px; flex-shrink: 0; }
+        .ws-txt { flex: 1; }
+        .ws-titulo { font-size: 18px; font-weight: 900; color: white; }
+        .ws-desc { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px; }
+        .ws-pronto-badge { background: rgba(255,255,255,0.2); color: white; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; margin-top: 6px; display: inline-block; letter-spacing: 1px; }
+
+        /* ── REDES SOCIALES ── */
+        .redes-wrap {
+            width: calc(100% - 32px);
+            margin: 14px 16px 0;
+            display: flex;
+            gap: 10px;
+        }
+        .red-card {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            opacity: 0.55;
+            border: 2px dashed #ddd;
+        }
+        .red-emoji { font-size: 28px; }
+        .red-nombre { font-size: 10px; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+        .red-pronto { font-size: 8px; font-weight: 700; color: var(--orange); background: var(--orange-light); padding: 2px 6px; border-radius: 8px; }
+
+        /* ── SOBRE NOSOTROS CARD ── */
+        .nosotros-card {
+            width: calc(100% - 32px);
+            margin: 14px 16px 0;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%);
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 6px 20px rgba(123,45,139,0.3);
+            transition: transform 0.2s;
+        }
+        .nosotros-card:active { transform: scale(0.97); }
+        .nosotros-emoji { font-size: 44px; }
+        .nosotros-txt { flex: 1; }
+        .nosotros-titulo { font-size: 16px; font-weight: 900; color: white; }
+        .nosotros-desc { font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600; margin-top: 3px; }
+
+        /* ── PRODUCTOS ── */
+        .productos-wrap { width: calc(100% - 32px); margin: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+        .subcategoria-titulo {
+            font-size: 13px; font-weight: 900;
+            padding: 10px 14px 6px 12px;
+            border-left: 4px solid var(--orange);
+            color: var(--orange);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            background: var(--orange-light);
+            border-radius: 0 10px 10px 0;
+        }
+        .producto-item {
+            background: white;
+            border-radius: 14px;
+            padding: 13px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1.5px solid #f0e6ff;
+            transition: border-color 0.2s;
+        }
+        .producto-item:active { border-color: var(--orange); }
+        .producto-emoji { font-size: 26px; flex-shrink: 0; }
+        .producto-info { flex: 1; }
+        .producto-nombre { font-size: 13px; font-weight: 800; color: var(--text); line-height: 1.3; }
+        .producto-detalle { font-size: 10px; font-weight: 600; color: var(--text2); margin-top: 2px; }
+        .producto-disponible {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ── PANTALLA SOBRE NOSOTROS ── */
+        .sobre-hero {
+            width: 100%;
+            background: linear-gradient(160deg, var(--purple) 0%, var(--purple2) 100%);
+            padding: 30px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .sobre-hero::before { content: '🐾'; position: absolute; font-size: 100px; opacity: 0.07; left: -20px; top: 10px; }
+        .sobre-hero::after { content: '🐾'; position: absolute; font-size: 80px; opacity: 0.07; right: -10px; bottom: 10px; transform: rotate(30deg); }
+        .sobre-logo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--orange); box-shadow: 0 0 0 4px rgba(255,154,69,0.3); margin-bottom: 14px; }
+        .sobre-nombre { font-size: 28px; font-weight: 900; color: white; }
+        .sobre-nombre span { color: var(--orange2); }
+        .sobre-slogan { background: var(--orange); color: white; font-size: 11px; font-weight: 800; letter-spacing: 2px; padding: 6px 18px; border-radius: 20px; display: inline-block; margin-top: 10px; }
+
+        .sobre-card {
+            width: calc(100% - 32px);
+            margin: 14px 16px 0;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .sobre-card-titulo { font-size: 15px; font-weight: 900; color: var(--purple); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .sobre-card-txt { font-size: 13px; font-weight: 600; color: var(--text2); line-height: 1.7; }
+
+        .valores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+        .valor-item { background: var(--purple-light); border-radius: 14px; padding: 14px; text-align: center; }
+        .valor-emoji { font-size: 28px; display: block; margin-bottom: 5px; }
+        .valor-nombre { font-size: 12px; font-weight: 900; color: var(--purple); }
+        .valor-desc { font-size: 10px; font-weight: 600; color: var(--text2); margin-top: 3px; }
+
+        /* ── BTN VOLVER ── */
+        .btn-volver {
+            margin: 20px 16px 0;
+            width: calc(100% - 32px);
+            background: white;
+            border: 3px solid var(--purple);
+            color: var(--purple);
+            padding: 13px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-volver:active { background: var(--purple); color: white; }
+
+        /* ── PIE ── */
+        .pie {
+            width: 100%;
+            background: linear-gradient(135deg, var(--purple) 0%, #3d0060 100%);
+            padding: 24px 20px;
+            text-align: center;
+            margin-top: 32px;
+        }
+        .pie-animales { font-size: 28px; margin-bottom: 8px; letter-spacing: 4px; }
+        .pie-nombre { font-weight: 900; font-size: 18px; color: white; }
+        .pie-nombre span { color: var(--orange2); }
+        .pie-slogan { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- ══ MENÚ PRINCIPAL ══ -->
+<div id="pantalla-menu" class="pantalla activa">
+
+    <div class="header">
+        <div class="header-patas p1">🐾</div>
+        <div class="header-patas p2">🐾</div>
+        <img class="header-logo" src="LOGO 1.png" alt="Mas Motas">
+        <div class="header-nombre">Mas<span>motas</span></div>
+        <div class="header-sub">Pet Shop</div>
+        <div class="header-slogan">❤️ Amor · Cuidado · Felicidad ❤️</div>
+    </div>
+
+    <!-- BIENVENIDA -->
+    <div class="bienvenida">
+        <div class="bienvenida-emoji">🐶🐱</div>
+        <div class="bienvenida-txt">
+            <div class="bienvenida-titulo">¡Bienvenido a Mas Motas! 🐾</div>
+            <div class="bienvenida-desc">Donde tu mascota es lo más importante. Aquí encontrarás todo lo que necesitan tus peludos con amor, cuidado y felicidad.</div>
+        </div>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="seccion-header">
+        <span class="seccion-emoji">🛍️</span>
+        <span class="seccion-titulo">Nuestros Productos</span>
+        <div class="seccion-linea"></div>
+    </div>
+
+    <div class="grid-cats">
+        <div class="cat-card c1" onclick="mostrarCat('comida-granel')">
+            <span class="cat-emoji">🌾</span>
+            <span class="cat-nombre">Comida a Granel</span>
+            <span class="cat-cantidad">16 productos</span>
+        </div>
+        <div class="cat-card c2" onclick="mostrarCat('comida-paquete')">
+            <span class="cat-emoji">📦</span>
+            <span class="cat-nombre">Comida en Paquete</span>
+            <span class="cat-cantidad">29 productos</span>
+        </div>
+        <div class="cat-card c3" onclick="mostrarCat('snacks')">
+            <span class="cat-emoji">🦴</span>
+            <span class="cat-nombre">Snacks y Comida Suelta</span>
+            <span class="cat-cantidad">9 productos</span>
+        </div>
+        <div class="cat-card c4" onclick="mostrarCat('arena')">
+            <span class="cat-emoji">🪣</span>
+            <span class="cat-nombre">Arena para Gato</span>
+            <span class="cat-cantidad">3 referencias</span>
+        </div>
+        <div class="cat-card c5" onclick="mostrarCat('accesorios')">
+            <span class="cat-emoji">🎽</span>
+            <span class="cat-nombre">Accesorios</span>
+            <span class="cat-cantidad">50+ productos</span>
+        </div>
+        <div class="cat-card c6" onclick="mostrarCat('platos')">
+            <span class="cat-emoji">🍽️</span>
+            <span class="cat-nombre">Platos y Guacales</span>
+            <span class="cat-cantidad">20 productos</span>
+        </div>
+        <div class="cat-card c7" onclick="mostrarCat('medicamentos')">
+            <span class="cat-emoji">💊</span>
+            <span class="cat-nombre">Medicamentos y Aseo</span>
+            <span class="cat-cantidad">30 productos</span>
+        </div>
+        <div class="cat-card c8" onclick="mostrarPantalla('pantalla-nosotros')">
+            <span class="cat-emoji">🏪</span>
+            <span class="cat-nombre">Sobre Nosotros</span>
+            <span class="cat-cantidad">¡Conócenos!</span>
+        </div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div class="seccion-header">
+        <span class="seccion-emoji">💬</span>
+        <span class="seccion-titulo">Contáctanos</span>
+        <div class="seccion-linea"></div>
+    </div>
+
+    <div class="ws-grande">
+        <div class="ws-icono">📲</div>
+        <div class="ws-txt">
+            <div class="ws-titulo">WhatsApp</div>
+            <div class="ws-desc">¡Muy pronto podrás escribirnos directamente!</div>
+            <span class="ws-pronto-badge">⏳ PRÓXIMAMENTE</span>
+        </div>
+    </div>
+
+    <!-- REDES SOCIALES -->
+    <div class="seccion-header">
+        <span class="seccion-emoji">📱</span>
+        <span class="seccion-titulo">Redes Sociales</span>
+        <div class="seccion-linea"></div>
+    </div>
+
+    <div class="redes-wrap">
+        <div class="red-card">
+            <span class="red-emoji">📸</span>
+            <span class="red-nombre">Instagram</span>
+            <span class="red-pronto">PRÓXIMAMENTE</span>
+        </div>
+        <div class="red-card">
+            <span class="red-emoji">🎵</span>
+            <span class="red-nombre">TikTok</span>
+            <span class="red-pronto">PRÓXIMAMENTE</span>
+        </div>
+        <div class="red-card">
+            <span class="red-emoji">👥</span>
+            <span class="red-nombre">Facebook</span>
+            <span class="red-pronto">PRÓXIMAMENTE</span>
+        </div>
+    </div>
+
+    <div class="pie">
+        <div class="pie-animales">🐶 🐱 🐾</div>
+        <div class="pie-nombre">Mas<span>motas</span> Pet Shop</div>
+        <div class="pie-slogan">Amor · Cuidado · Felicidad · Bogotá 🇨🇴</div>
+    </div>
+</div>
+
+<!-- ══ SOBRE NOSOTROS ══ -->
+<div id="pantalla-nosotros" class="pantalla">
+    <div class="sobre-hero">
+        <img class="sobre-logo" src="LOGO 1.png" alt="Mas Motas">
+        <div class="sobre-nombre">Mas<span>motas</span></div>
+        <div class="sobre-slogan">❤️ Amor · Cuidado · Felicidad</div>
+    </div>
+
+    <div class="sobre-card">
+        <div class="sobre-card-titulo">🐾 ¿Quiénes somos?</div>
+        <div class="sobre-card-txt">Somos <strong>Mas Motas Pet Shop</strong>, una tienda dedicada con todo el amor del mundo a nuestras mascotas. Creemos que los peludos de la familia merecen lo mejor — desde su alimentación hasta sus juguetes y accesorios. Nacemos en Bogotá con el sueño de ser el lugar de confianza para cada dueño de mascota.</div>
+    </div>
+
+    <div class="sobre-card" style="margin-top:12px;">
+        <div class="sobre-card-titulo">💜 Nuestra Misión</div>
+        <div class="sobre-card-txt">Brindar productos de calidad para el bienestar de perros y gatos, con precios justos y un servicio lleno de amor y dedicación. Porque cuando tu mascota está feliz, tú también lo estás. 🐶🐱</div>
+    </div>
+
+    <div class="sobre-card" style="margin-top:12px;">
+        <div class="sobre-card-titulo">✨ Nuestros Valores</div>
+        <div class="valores-grid">
+            <div class="valor-item">
+                <span class="valor-emoji">❤️</span>
+                <div class="valor-nombre">Amor</div>
+                <div class="valor-desc">Cada producto elegido con cariño</div>
+            </div>
+            <div class="valor-item">
+                <span class="valor-emoji">🛡️</span>
+                <div class="valor-nombre">Cuidado</div>
+                <div class="valor-desc">La salud de tu mascota primero</div>
+            </div>
+            <div class="valor-item">
+                <span class="valor-emoji">😊</span>
+                <div class="valor-nombre">Felicidad</div>
+                <div class="valor-desc">Porque merecen lo mejor</div>
+            </div>
+            <div class="valor-item">
+                <span class="valor-emoji">🤝</span>
+                <div class="valor-nombre">Confianza</div>
+                <div class="valor-desc">Tu aliado de confianza</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sobre-card" style="margin-top:12px;">
+        <div class="sobre-card-titulo">🐶🐱 ¿A quién atendemos?</div>
+        <div class="sobre-card-txt">Tenemos productos especializados para <strong>perros y gatos</strong> de todas las razas, tamaños y edades — desde cachorros y gatitos hasta adultos mayores. ¡Todos son bienvenidos en Mas Motas!</div>
+    </div>
+
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al inicio</button>
+    <div class="pie">
+        <div class="pie-animales">🐶 🐱 🐾</div>
+        <div class="pie-nombre">Mas<span>motas</span> Pet Shop</div>
+        <div class="pie-slogan">Amor · Cuidado · Felicidad · Bogotá 🇨🇴</div>
+    </div>
+</div>
+
+<!-- ══ COMIDA A GRANEL ══ -->
+<div id="pantalla-comida-granel" class="pantalla">
+    <div class="header">
+        <div class="header-patas p1">🐾</div>
+        <img class="header-logo" src="LOGO 1.png" alt="Mas Motas">
+        <div class="header-nombre">Mas<span>motas</span></div>
+        <div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🌾</span><span class="seccion-titulo">Comida a Granel</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Para Perro</div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Chunky Perro</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Ringo</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Dog Chow</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Don Kan</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Monello Perro</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Don Kan Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Dog Chow Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Dogourmet Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🐱 Para Gato</div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Mirringo</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Don Kat</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Chunky Gato</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Monello Gato</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Cat Chow</div><div class="producto-detalle">Comida granel · Bulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐱</span><div class="producto-info"><div class="producto-nombre">Don Kat Gatito</div><div class="producto-detalle">Comida granel · Gatito</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐱</span><div class="producto-info"><div class="producto-nombre">Chunky Gatito</div><div class="producto-detalle">Comida granel · Gatito</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ COMIDA PAQUETE ══ -->
+<div id="pantalla-comida-paquete" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">📦</span><span class="seccion-titulo">Comida en Paquete</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Paquetes Perro</div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Dog Chow Raza Pequeña</div><div class="producto-detalle">Paquete · Raza pequeña</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Perro</div><div class="producto-detalle">Paquete premium</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Monello Perro</div><div class="producto-detalle">Paquete</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Dog Chow</div><div class="producto-detalle">Sobre húmedo perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Chonky Perro Sobre</div><div class="producto-detalle">Sobre húmedo perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Wow con Sobre</div><div class="producto-detalle">Sobre húmedo perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Perro Paq x5</div><div class="producto-detalle">Cremoso · paquete x5</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🐱 Paquetes Gato</div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Monello Gato</div><div class="producto-detalle">Paquete</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gatito</div><div class="producto-detalle">Paquete · Gatito</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gato Adulto</div><div class="producto-detalle">Paquete · Adulto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gato Castrado</div><div class="producto-detalle">Paquete · Castrado</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato Paq x5</div><div class="producto-detalle">Cremoso · paquete x5</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato x Unidad</div><div class="producto-detalle">Cremoso · por unidad</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato Muau</div><div class="producto-detalle">Cremoso Muau</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Chunky Gato</div><div class="producto-detalle">Sobre húmedo gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Felix</div><div class="producto-detalle">Sobre húmedo gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Fancy Gato</div><div class="producto-detalle">Sobre húmedo gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥫</span><div class="producto-info"><div class="producto-nombre">Lata Felix</div><div class="producto-detalle">Lata húmedo gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐟</span><div class="producto-info"><div class="producto-nombre">Felix Paq x 200g</div><div class="producto-detalle">Paquete 200g</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galletas Kelcat Paq</div><div class="producto-detalle">Galletas para gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🦴 Snacks Empacados</div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Tráquea Paq</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Pernil Cerdo Unidad</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesitos Malla</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesos Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Pernil Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🍪 Galletas</div>
+        <div class="producto-item"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Leche</div><div class="producto-detalle">Galleta para perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Arena</div><div class="producto-detalle">Galleta para perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Pollo</div><div class="producto-detalle">Galleta para perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥛</span><div class="producto-info"><div class="producto-nombre">Frasco Leche</div><div class="producto-detalle">Leche para mascotas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ SNACKS ══ -->
+<div id="pantalla-snacks" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">🦴</span><span class="seccion-titulo">Snacks y Comida Suelta</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Comida Suelta Perro</div>
+        <div class="producto-item"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Costillas Ahumadas</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Barquillos Ahumados</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐔</span><div class="producto-info"><div class="producto-nombre">Palitos Hígado Pollo</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesitos Ahumados</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Limpia Dientes</div><div class="producto-detalle">Snack dental perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐷</span><div class="producto-info"><div class="producto-nombre">Orejas Cerdo</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Cabanos Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🐱 Snacks Gato</div>
+        <div class="producto-item"><span class="producto-emoji">🎱</span><div class="producto-info"><div class="producto-nombre">Galletas Bola Pelo Gato</div><div class="producto-detalle">Control bola de pelo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍮</span><div class="producto-info"><div class="producto-nombre">Pudines Gato</div><div class="producto-detalle">Snack cremoso gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ ARENA ══ -->
+<div id="pantalla-arena" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">🪣</span><span class="seccion-titulo">Arena para Gato</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐱 Arenas Disponibles</div>
+        <div class="producto-item"><span class="producto-emoji">🎃</span><div class="producto-info"><div class="producto-nombre">Arena Calabaza</div><div class="producto-detalle">4.5 kg · 10 unidades disponibles</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌽</span><div class="producto-info"><div class="producto-nombre">Arena Maíz</div><div class="producto-detalle">4 kg · Biodegradable</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Arena Tofu</div><div class="producto-detalle">2.5 kg · Natural</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ ACCESORIOS ══ -->
+<div id="pantalla-accesorios" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">🎽</span><span class="seccion-titulo">Accesorios</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🧴 Aseo y Cuidado</div>
+        <div class="producto-item"><span class="producto-emoji">🪣</span><div class="producto-info"><div class="producto-nombre">Pala Plástica Arena</div><div class="producto-detalle">Para arenero gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🪣</span><div class="producto-info"><div class="producto-nombre">Pala Plástica Perro</div><div class="producto-detalle">Recoge heces</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧹</span><div class="producto-info"><div class="producto-nombre">Rodillo Quita Pelos</div><div class="producto-detalle">Ropa y muebles</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🔄</span><div class="producto-info"><div class="producto-nombre">Repuesto Rodillo Quita Pelos</div><div class="producto-detalle">Recambio</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Cepillo Dental Pequeño</div><div class="producto-detalle">Higiene dental perro pequeño</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Cepillo Dental Grande</div><div class="producto-detalle">Higiene dental perro grande</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧤</span><div class="producto-info"><div class="producto-nombre">Guante Peinar Perro-Gato</div><div class="producto-detalle">Cepillado masaje</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧤</span><div class="producto-info"><div class="producto-nombre">Guante Peinar Pequeño</div><div class="producto-detalle">Cepillado masaje</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🪮</span><div class="producto-info"><div class="producto-nombre">Cepillo Peinar Sencillo</div><div class="producto-detalle">Cepillo pelo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🪮</span><div class="producto-info"><div class="producto-nombre">Cepillo Peinar Premium</div><div class="producto-detalle">Cepillo profesional</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">✂️</span><div class="producto-info"><div class="producto-nombre">Cortauñas Sencillo</div><div class="producto-detalle">Corte de uñas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">✂️</span><div class="producto-info"><div class="producto-nombre">Cortauñas Grande</div><div class="producto-detalle">Uñas perro grande</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Dispensador Shampú</div><div class="producto-detalle">Dispensador baño</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🎾 Juguetes Perro</div>
+        <div class="producto-item"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Juguete Limpia Dientes</div><div class="producto-detalle">Higiene y juego</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🪢</span><div class="producto-info"><div class="producto-nombre">Juguete con Cuerda</div><div class="producto-detalle">Juguete interactivo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎾</span><div class="producto-info"><div class="producto-nombre">Pelota Tenis</div><div class="producto-detalle">Juguete perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧸</span><div class="producto-info"><div class="producto-nombre">Peluche Pequeño</div><div class="producto-detalle">Juguete perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧸</span><div class="producto-info"><div class="producto-nombre">Peluche Grande</div><div class="producto-detalle">Juguete perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚽</span><div class="producto-info"><div class="producto-nombre">Pelota Grande Portasnack</div><div class="producto-detalle">Juguete interactivo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥏</span><div class="producto-info"><div class="producto-nombre">Frisbee</div><div class="producto-detalle">Disco volador</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚫</span><div class="producto-info"><div class="producto-nombre">Llantas Macizas</div><div class="producto-detalle">Juguete resistente</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚽</span><div class="producto-info"><div class="producto-nombre">Pelotas Macizas</div><div class="producto-detalle">Juguete resistente</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🪢</span><div class="producto-info"><div class="producto-nombre">Juguete Lazo y Bumerán</div><div class="producto-detalle">Set juguetes perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🐱 Juguetes Gato</div>
+        <div class="producto-item"><span class="producto-emoji">🎣</span><div class="producto-info"><div class="producto-nombre">Cañas Gato</div><div class="producto-detalle">Juguete interactivo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧸</span><div class="producto-info"><div class="producto-nombre">Peluche Gato</div><div class="producto-detalle">Juguete gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Catnip</div><div class="producto-detalle">Hierba gatera</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Juguetes Catnip</div><div class="producto-detalle">Con hierba gatera</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚽</span><div class="producto-info"><div class="producto-nombre">Pelotas Variedad Gato</div><div class="producto-detalle">Set pelotas gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🔔</span><div class="producto-info"><div class="producto-nombre">Juguetes Sonido Gato</div><div class="producto-detalle">Juguete con sonido</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Gimnasio Gato</div><div class="producto-detalle">Torre rascador completo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐭</span><div class="producto-info"><div class="producto-nombre">Ratón Resorte</div><div class="producto-detalle">Juguete gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🥊</span><div class="producto-info"><div class="producto-nombre">Bola Boxeador Gato</div><div class="producto-detalle">Juguete interactivo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🎀 Collares · Correas · Ropa</div>
+        <div class="producto-item"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collares Gato</div><div class="producto-detalle">Collar para gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Gato Silicona</div><div class="producto-detalle">Collar silicona suave</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Perro</div><div class="producto-detalle">Collar para perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">💡</span><div class="producto-info"><div class="producto-nombre">Collar Perro con Luz</div><div class="producto-detalle">Collar LED seguridad</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🕶️</span><div class="producto-info"><div class="producto-nombre">Gafas Perro</div><div class="producto-detalle">Accesorio moda</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎩</span><div class="producto-info"><div class="producto-nombre">Gorros Peluche</div><div class="producto-detalle">Ropa mascotas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎀</span><div class="producto-info"><div class="producto-nombre">Pañoleta Sencilla</div><div class="producto-detalle">Accesorio moda</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎀</span><div class="producto-info"><div class="producto-nombre">Pañoleta con Collar</div><div class="producto-detalle">Pañoleta + collar</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎀</span><div class="producto-info"><div class="producto-nombre">Monitos Penci</div><div class="producto-detalle">Accesorios cabello</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧢</span><div class="producto-info"><div class="producto-nombre">Gorras Pequeñas</div><div class="producto-detalle">Ropa mascota pequeña</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧢</span><div class="producto-info"><div class="producto-nombre">Gorras Grandes</div><div class="producto-detalle">Ropa perro grande</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧥</span><div class="producto-info"><div class="producto-nombre">Chaleco Impermeable</div><div class="producto-detalle">Ropa lluvia mascotas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦺</span><div class="producto-info"><div class="producto-nombre">Pechera Pequeña</div><div class="producto-detalle">Arnés pequeño</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🦺</span><div class="producto-info"><div class="producto-nombre">Chaleco Pechera</div><div class="producto-detalle">Arnés tipo chaleco</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🔗</span><div class="producto-info"><div class="producto-nombre">Correa Sola</div><div class="producto-detalle">Correa para paseo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🚗</span><div class="producto-info"><div class="producto-nombre">Correa para Vehículo</div><div class="producto-detalle">Seguridad en carro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Sencillo</div><div class="producto-detalle">Collar básico perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">😷</span><div class="producto-info"><div class="producto-nombre">Bozal Grande</div><div class="producto-detalle">Bozal perro grande</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">😷</span><div class="producto-info"><div class="producto-nombre">Bozal Pequeño</div><div class="producto-detalle">Bozal perro pequeño</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎒</span><div class="producto-info"><div class="producto-nombre">Cargador Perro</div><div class="producto-detalle">Mochila cargador</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🛍️ Bolsas e Higiene</div>
+        <div class="producto-item"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Porta Bolsas</div><div class="producto-detalle">Dispensador bolsas paseo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x3</div><div class="producto-detalle">Bolsas recoge heces</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x6</div><div class="producto-detalle">Bolsas recoge heces</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x10</div><div class="producto-detalle">Bolsas recoge heces</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🏠 Otros Accesorios</div>
+        <div class="producto-item"><span class="producto-emoji">🐹</span><div class="producto-info"><div class="producto-nombre">Bola Hámster</div><div class="producto-detalle">Juguete hámster</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Arenera Cubierta</div><div class="producto-detalle">Baño gato cubierto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Arenera Sencilla</div><div class="producto-detalle">Baño gato abierto</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ PLATOS ══ -->
+<div id="pantalla-platos" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">🍽️</span><span class="seccion-titulo">Platos y Guacales</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">💧 Dispensadores y Fuentes</div>
+        <div class="producto-item"><span class="producto-emoji">🚰</span><div class="producto-info"><div class="producto-nombre">Dispensador Comida-Agua</div><div class="producto-detalle">Doble dispensador automático</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⛲</span><div class="producto-info"><div class="producto-nombre">Fuente Agua Eléctrica</div><div class="producto-detalle">Fuente eléctrica mascotas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🍽️ Platos</div>
+        <div class="producto-item"><span class="producto-emoji">🌸</span><div class="producto-info"><div class="producto-nombre">Plato Agua Flor</div><div class="producto-detalle">Diseño floral</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Acrílico</div><div class="producto-detalle">Doble compartimento</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Plástico Gato</div><div class="producto-detalle">Para gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Sencillo Gato</div><div class="producto-detalle">Plato individual gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Plato Hoja</div><div class="producto-detalle">Diseño hoja</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Plástico Grande</div><div class="producto-detalle">Para perro grande</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐟</span><div class="producto-info"><div class="producto-nombre">Plato Doble Pez</div><div class="producto-detalle">Diseño pez</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Grande</div><div class="producto-detalle">Previene comer rápido</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Mediano</div><div class="producto-detalle">Previene comer rápido</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Pequeño</div><div class="producto-detalle">Previene comer rápido</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚙️</span><div class="producto-info"><div class="producto-nombre">Plato Acero</div><div class="producto-detalle">Acero inoxidable</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">⚙️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Acero Gato</div><div class="producto-detalle">Doble acero para gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎒</span><div class="producto-info"><div class="producto-nombre">Plato Portátil Pequeño</div><div class="producto-detalle">Para viajes y paseos</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Impermeable</div><div class="producto-detalle">Resistente agua</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐾</span><div class="producto-info"><div class="producto-nombre">Porta Snack</div><div class="producto-detalle">Dispensador snacks</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🏠 Guacales</div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Pequeño</div><div class="producto-detalle">Transporte mascotas pequeñas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Mediano</div><div class="producto-detalle">Transporte mascotas medianas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Grande</div><div class="producto-detalle">Transporte mascotas grandes</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ MEDICAMENTOS ══ -->
+<div id="pantalla-medicamentos" class="pantalla">
+    <div class="header"><div class="header-patas p1">🐾</div><img class="header-logo" src="LOGO 1.png" alt="Mas Motas"><div class="header-nombre">Mas<span>motas</span></div><div class="header-slogan">❤️ Amor · Cuidado · Felicidad</div></div>
+    <div class="seccion-header"><span class="seccion-emoji">💊</span><span class="seccion-titulo">Medicamentos y Aseo</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">💊 Medicamentos</div>
+        <div class="producto-item"><span class="producto-emoji">💊</span><div class="producto-info"><div class="producto-nombre">Purgante Suspensión</div><div class="producto-detalle">Antiparasitario líquido</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">💊</span><div class="producto-info"><div class="producto-nombre">Purgante Pastas</div><div class="producto-detalle">Antiparasitario pasta</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐛</span><div class="producto-info"><div class="producto-nombre">Antipulgas Pipeta</div><div class="producto-detalle">Pipeta antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Antipulgas</div><div class="producto-detalle">Collar repelente</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐛</span><div class="producto-info"><div class="producto-nombre">Antipulgas Pasta</div><div class="producto-detalle">Pasta antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🐛</span><div class="producto-info"><div class="producto-nombre">Antipulgas Caja</div><div class="producto-detalle">Tratamiento antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">💧</span><div class="producto-info"><div class="producto-nombre">Antipulgas Gotas</div><div class="producto-detalle">Gotas antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">💧</span><div class="producto-info"><div class="producto-nombre">Suero Sobre</div><div class="producto-detalle">Suero rehidratante</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">🧴 Aseo y Baño</div>
+        <div class="producto-item"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Sobre Medicado</div><div class="producto-detalle">Shampú medicado</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Sobre Limpieza</div><div class="producto-detalle">Shampú limpieza</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Sobre Antipulgas</div><div class="producto-detalle">Shampú antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Famo</div><div class="producto-detalle">Shampú frasco completo</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌬️</span><div class="producto-info"><div class="producto-nombre">Baño Seco Antipulgas</div><div class="producto-detalle">Baño sin agua</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌬️</span><div class="producto-info"><div class="producto-nombre">Baño Seco Famo</div><div class="producto-detalle">Baño sin agua</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧽</span><div class="producto-info"><div class="producto-nombre">Gabín Borra Antipulgas</div><div class="producto-detalle">Toallita antipulgas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧽</span><div class="producto-info"><div class="producto-nombre">Gabín Borra Limpieza</div><div class="producto-detalle">Toallita limpieza</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌸</span><div class="producto-info"><div class="producto-nombre">Talco Limpieza</div><div class="producto-detalle">Talco para mascotas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧻</span><div class="producto-info"><div class="producto-nombre">Pañitos Húmedos Grande</div><div class="producto-detalle">Toallitas húmedas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🧻</span><div class="producto-info"><div class="producto-nombre">Pañitos Húmedos Pequeño</div><div class="producto-detalle">Toallitas húmedas</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌺</span><div class="producto-info"><div class="producto-nombre">Perfume Perro Grande</div><div class="producto-detalle">Fragancia para perro</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌺</span><div class="producto-info"><div class="producto-nombre">Perfume Gato Pequeño</div><div class="producto-detalle">Fragancia para gato</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="subcategoria-titulo">✨ Otros Productos</div>
+        <div class="producto-item"><span class="producto-emoji">💇</span><div class="producto-info"><div class="producto-nombre">Vitamina Pelo</div><div class="producto-detalle">Pelo brillante y sano</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🌸</span><div class="producto-info"><div class="producto-nombre">Perlas Antiolor</div><div class="producto-detalle">Elimina olores</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🩲</span><div class="producto-info"><div class="producto-nombre">Pañal Perro</div><div class="producto-detalle">Pañal descartable</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🎓</span><div class="producto-info"><div class="producto-nombre">Educador Famo</div><div class="producto-detalle">Spray educador</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">💊</span><div class="producto-info"><div class="producto-nombre">Fomia Snack</div><div class="producto-detalle">Suplemento</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🟫</span><div class="producto-info"><div class="producto-nombre">Tapete Cachero</div><div class="producto-detalle">Tapete entrenamiento</div></div><span class="producto-disponible">✓ Disponible</span></div>
+        <div class="producto-item"><span class="producto-emoji">🔵</span><div class="producto-info"><div class="producto-nombre">Cono Isabelino</div><div class="producto-detalle">Collar recuperación</div></div><span class="producto-disponible">✓ Disponible</span></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<script>
+    function mostrarPantalla(id) {
+        document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+        document.getElementById(id).classList.add('activa');
+        window.scrollTo(0, 0);
+    }
+    function mostrarCat(cat) { mostrarPantalla('pantalla-' + cat); }
+</script>
+</body>
+</html>
