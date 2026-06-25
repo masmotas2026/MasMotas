@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mas Motas Pet Shop 🐾</title>
+    <!-- Open Graph para WhatsApp / Redes -->
+    <meta property="og:title" content="Mas Motas Pet Shop 🐾">
+    <meta property="og:description" content="Catálogo virtual. Todo lo que necesitan tus peludos con amor, cuidado y felicidad. ¡Pide ahora por WhatsApp!">
+    <meta property="og:image" content="LOGO 1.png">
+    <meta property="og:url" content="https://masmotas2026.github.io/MasMotas/">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #7B2D8B; --purple2: #9B4DCA; --purple-light: #f3e8ff;
+            --orange: #F47B20; --orange2: #FF9A45; --orange-light: #fff3e0;
+            --yellow: #FFD600; --green: #4CAF50; --blue: #2196F3; --pink: #E91E8C;
+            --bg: #FFF9F0; --text: #2d1b4e; --text2: #7c6090; --white: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+        .pantalla { width: 100%; max-width: 480px; display: none; flex-direction: column; align-items: center; padding: 0 0 100px; }
+        .pantalla.activa { display: flex; }
+
+        /* ── HEADER FIJO ── */
+        .sticky-header {
+            position: sticky; top: 0; z-index: 50;
+            width: 100%; background: var(--purple);
+            padding: 10px 16px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        .sticky-back {
+            background: rgba(255,255,255,0.15); border: none; color: white;
+            width: 36px; height: 36px; border-radius: 10px;
+            font-size: 18px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Nunito', sans-serif;
+        }
+        .sticky-back:active { background: rgba(255,255,255,0.3); }
+        .sticky-titulo { font-size: 15px; font-weight: 900; color: white; flex: 1; }
+        .sticky-carrito {
+            background: var(--orange); border: none; color: white;
+            padding: 6px 12px; border-radius: 10px; font-size: 12px;
+            font-weight: 900; cursor: pointer; font-family: 'Nunito', sans-serif;
+            display: flex; align-items: center; gap: 5px;
+            transition: transform 0.1s;
+        }
+        .sticky-carrito:active { transform: scale(0.95); }
+        .carrito-badge {
+            background: white; color: var(--orange);
+            width: 18px; height: 18px; border-radius: 50%;
+            font-size: 10px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ── HEADER PRINCIPAL ── */
+        .header {
+            width: 100%;
+            background: linear-gradient(160deg, var(--purple) 0%, #5B1A7A 60%, #3d0060 100%);
+            padding: 28px 20px 24px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .header-patas { position: absolute; font-size: 80px; opacity: 0.07; }
+        .header-patas.p1 { top: -10px; left: -20px; transform: rotate(-20deg); }
+        .header-patas.p2 { bottom: -10px; right: -15px; transform: rotate(15deg); }
+        .header-logo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--orange); box-shadow: 0 0 0 4px rgba(255,154,69,0.3), 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 12px; position: relative; z-index: 1; }
+        .header-nombre { font-weight: 900; font-size: 30px; color: white; text-align: center; line-height: 1; position: relative; z-index: 1; }
+        .header-nombre span { color: var(--orange2); }
+        .header-sub { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; position: relative; z-index: 1; }
+        .header-slogan { margin-top: 12px; background: var(--orange); color: white; font-size: 11px; font-weight: 800; letter-spacing: 2px; padding: 6px 20px; border-radius: 30px; box-shadow: 0 4px 12px rgba(244,123,32,0.4); position: relative; z-index: 1; }
+
+        /* ── BUSCADOR ── */
+        .buscador-box {
+            width: calc(100% - 32px); margin: 14px 16px 0;
+            position: relative;
+        }
+        .buscador-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; }
+        .buscador-input {
+            width: 100%; padding: 13px 14px 13px 44px;
+            border-radius: 16px; border: 2.5px solid #e8d5ff;
+            background: white; font-size: 14px; font-weight: 700;
+            font-family: 'Nunito', sans-serif; color: var(--text);
+            box-shadow: 0 3px 12px rgba(123,45,139,0.1); outline: none;
+        }
+        .buscador-input:focus { border-color: var(--purple2); }
+        .buscador-input::placeholder { color: #bba8cc; font-weight: 600; }
+        .buscador-resultados {
+            width: 100%; background: white; border-radius: 16px;
+            border: 2px solid #e8d5ff; margin-top: 6px;
+            box-shadow: 0 8px 24px rgba(123,45,139,0.12);
+            max-height: 300px; overflow-y: auto; display: none;
+        }
+        .busq-item {
+            padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid #f0e6ff; cursor: pointer;
+        }
+        .busq-item:last-child { border-bottom: none; }
+        .busq-item:active { background: var(--purple-light); }
+        .busq-emoji { font-size: 22px; flex-shrink: 0; }
+        .busq-info { flex: 1; }
+        .busq-nombre { font-size: 13px; font-weight: 800; color: var(--text); }
+        .busq-cat { font-size: 10px; font-weight: 700; color: var(--purple2); }
+        .busq-add { background: var(--orange); color: white; border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 16px; cursor: pointer; flex-shrink: 0; font-family: 'Nunito', sans-serif; font-weight: 900; }
+
+        /* ── BIENVENIDA ── */
+        .bienvenida { width: calc(100% - 32px); margin: 14px 16px 0; background: linear-gradient(135deg, var(--orange) 0%, var(--orange2) 100%); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 14px; box-shadow: 0 6px 20px rgba(244,123,32,0.3); position: relative; overflow: hidden; }
+        .bienvenida::after { content: '🐾'; position: absolute; font-size: 80px; opacity: 0.12; right: -10px; bottom: -10px; }
+        .bienvenida-emoji { font-size: 50px; flex-shrink: 0; }
+        .bienvenida-titulo { font-size: 16px; font-weight: 900; color: white; line-height: 1.3; margin-bottom: 4px; }
+        .bienvenida-desc { font-size: 11px; color: rgba(255,255,255,0.9); font-weight: 600; line-height: 1.5; }
+
+        /* ── PROMO DEL MES ── */
+        .promo-card {
+            width: calc(100% - 32px); margin: 14px 16px 0;
+            background: linear-gradient(135deg, #FFD600 0%, #FF9A45 100%);
+            border-radius: 20px; padding: 18px;
+            box-shadow: 0 6px 20px rgba(255,214,0,0.3);
+            position: relative; overflow: hidden;
+        }
+        .promo-card::after { content: '⭐'; position: absolute; font-size: 70px; opacity: 0.15; right: 10px; top: -5px; }
+        .promo-badge { background: var(--purple); color: white; font-size: 9px; font-weight: 900; letter-spacing: 2px; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+        .promo-titulo { font-size: 16px; font-weight: 900; color: white; margin-bottom: 4px; }
+        .promo-desc { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); line-height: 1.5; }
+
+        /* ── SECCIÓN ── */
+        .seccion-header { width: 100%; padding: 20px 16px 10px; display: flex; align-items: center; gap: 10px; }
+        .seccion-titulo { font-size: 16px; font-weight: 900; color: var(--purple); }
+        .seccion-emoji { font-size: 20px; }
+        .seccion-linea { flex: 1; height: 3px; background: linear-gradient(to right, var(--orange), var(--yellow), transparent); border-radius: 4px; }
+
+        /* ── GRID CATEGORÍAS ── */
+        .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); margin: 0 16px; }
+        .cat-card { background: white; border-radius: 20px; padding: 18px 12px; cursor: pointer; border: 3px solid transparent; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transition: all 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; position: relative; overflow: hidden; }
+        .cat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; border-radius: 20px 20px 0 0; }
+        .cat-card.c1::before { background: linear-gradient(to right, var(--orange), var(--yellow)); }
+        .cat-card.c2::before { background: linear-gradient(to right, var(--purple), var(--purple2)); }
+        .cat-card.c3::before { background: linear-gradient(to right, var(--green), #81C784); }
+        .cat-card.c4::before { background: linear-gradient(to right, var(--blue), #64B5F6); }
+        .cat-card.c5::before { background: linear-gradient(to right, var(--pink), #F48FB1); }
+        .cat-card.c6::before { background: linear-gradient(to right, #FF5722, #FF8A65); }
+        .cat-card.c7::before { background: linear-gradient(to right, #009688, #4DB6AC); }
+        .cat-card.c8::before { background: linear-gradient(to right, var(--purple), var(--orange)); }
+        .cat-card:active { transform: scale(0.95); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .cat-emoji { font-size: 40px; margin-top: 4px; }
+        .cat-nombre { font-size: 12px; font-weight: 900; color: var(--text); line-height: 1.3; }
+        .cat-cantidad { font-size: 10px; font-weight: 700; color: var(--text2); background: var(--purple-light); padding: 2px 8px; border-radius: 10px; }
+
+        /* ── WHATSAPP ── */
+        .ws-grande { width: calc(100% - 32px); margin: 14px 16px 0; background: linear-gradient(135deg, #128C7E 0%, #25D366 100%); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 14px; text-decoration: none; box-shadow: 0 6px 20px rgba(37,211,102,0.35); cursor: pointer; transition: transform 0.2s; }
+        .ws-grande:active { transform: scale(0.97); }
+        .ws-icono { font-size: 44px; flex-shrink: 0; }
+        .ws-titulo { font-size: 18px; font-weight: 900; color: white; }
+        .ws-desc { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px; }
+        .ws-pronto-badge { background: rgba(255,255,255,0.2); color: white; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; margin-top: 6px; display: inline-block; letter-spacing: 1px; }
+
+        /* ── REDES ── */
+        .redes-wrap { width: calc(100% - 32px); margin: 14px 16px 0; display: flex; gap: 10px; }
+        .red-card { flex: 1; background: white; border-radius: 16px; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); opacity: 0.55; border: 2px dashed #ddd; }
+        .red-emoji { font-size: 28px; }
+        .red-nombre { font-size: 10px; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+        .red-pronto { font-size: 8px; font-weight: 700; color: var(--orange); background: var(--orange-light); padding: 2px 6px; border-radius: 8px; }
+
+        /* ── SOBRE NOSOTROS ── */
+        .nosotros-card { width: calc(100% - 32px); margin: 14px 16px 0; background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%); border-radius: 20px; padding: 20px; cursor: pointer; display: flex; align-items: center; gap: 14px; box-shadow: 0 6px 20px rgba(123,45,139,0.3); transition: transform 0.2s; }
+        .nosotros-card:active { transform: scale(0.97); }
+        .nosotros-titulo { font-size: 16px; font-weight: 900; color: white; }
+        .nosotros-desc { font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600; margin-top: 3px; }
+
+        /* ── FILTROS CATEGORÍA ── */
+        .filtros-cat {
+            width: calc(100% - 32px); margin: 12px 16px 0;
+            display: flex; gap: 8px;
+        }
+        .filtro-cat-btn {
+            flex: 1; padding: 9px 8px; border-radius: 12px;
+            border: 2.5px solid #e8d5ff; background: white;
+            font-size: 12px; font-weight: 800; font-family: 'Nunito', sans-serif;
+            color: var(--text2); cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .filtro-cat-btn.activo { background: var(--purple); border-color: var(--purple); color: white; }
+        .filtro-cat-btn:active { transform: scale(0.96); }
+
+        /* ── PRODUCTOS ── */
+        .productos-wrap { width: calc(100% - 32px); margin: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+        .subcategoria-titulo { font-size: 13px; font-weight: 900; padding: 10px 14px 6px 12px; border-left: 4px solid var(--orange); color: var(--orange); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 10px; background: var(--orange-light); border-radius: 0 10px 10px 0; }
+        .producto-item { background: white; border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1.5px solid #f0e6ff; transition: border-color 0.2s; }
+        .producto-item.oculto { display: none; }
+        .producto-emoji { font-size: 26px; flex-shrink: 0; }
+        .producto-info { flex: 1; }
+        .producto-nombre { font-size: 13px; font-weight: 800; color: var(--text); line-height: 1.3; }
+        .producto-detalle { font-size: 10px; font-weight: 600; color: var(--text2); margin-top: 2px; }
+        .producto-disponible { background: #e8f5e9; color: #2e7d32; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 10px; flex-shrink: 0; }
+        .btn-add {
+            background: var(--orange); color: white; border: none;
+            width: 32px; height: 32px; border-radius: 10px;
+            font-size: 20px; font-weight: 900; cursor: pointer;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            font-family: 'Nunito', sans-serif; transition: transform 0.1s;
+            box-shadow: 0 3px 8px rgba(244,123,32,0.35);
+        }
+        .btn-add:active { transform: scale(0.9); }
+        .btn-add.agregado { background: var(--green); }
+
+        /* ── CARRITO FLOTANTE ── */
+        .carrito-flotante {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 32px); max-width: 448px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple2) 100%);
+            color: white; padding: 14px 20px; border-radius: 18px;
+            display: none; align-items: center; justify-content: space-between;
+            box-shadow: 0 8px 30px rgba(123,45,139,0.4); z-index: 200;
+        }
+        .carrito-flotante.visible { display: flex; }
+        .carrito-info { display: flex; flex-direction: column; }
+        .carrito-count { font-size: 12px; font-weight: 700; opacity: 0.8; }
+        .carrito-label { font-size: 15px; font-weight: 900; }
+        .btn-ver-carrito {
+            background: var(--orange); color: white; border: none;
+            padding: 10px 18px; border-radius: 12px; font-size: 13px;
+            font-weight: 900; cursor: pointer; font-family: 'Nunito', sans-serif;
+            white-space: nowrap;
+        }
+        .btn-ver-carrito:active { opacity: 0.85; }
+
+        /* ── PANTALLA CARRITO ── */
+        .carrito-item { background: white; border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1.5px solid #f0e6ff; margin-bottom: 8px; }
+        .carrito-item-info { flex: 1; }
+        .carrito-item-nombre { font-size: 13px; font-weight: 800; color: var(--text); }
+        .carrito-item-cat { font-size: 10px; font-weight: 700; color: var(--purple2); }
+        .btn-quitar { background: #ffebee; color: #c62828; border: none; width: 30px; height: 30px; border-radius: 8px; font-size: 16px; cursor: pointer; flex-shrink: 0; }
+        .btn-quitar:active { background: #ffcdd2; }
+        .btn-enviar-pedido {
+            width: 100%; padding: 16px; border: none; border-radius: 16px;
+            background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+            color: white; font-size: 15px; font-weight: 900;
+            font-family: 'Nunito', sans-serif; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(37,211,102,0.4);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-enviar-pedido:active { opacity: 0.9; }
+        .btn-vaciar { background: none; border: 2px solid #ffcdd2; color: #c62828; padding: 10px; border-radius: 12px; width: 100%; font-size: 13px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; margin-top: 10px; }
+        .carrito-vacio { text-align: center; padding: 40px 20px; }
+        .carrito-vacio span { font-size: 50px; display: block; margin-bottom: 12px; }
+        .carrito-vacio p { font-size: 15px; font-weight: 700; color: var(--text2); }
+
+        /* ── SOBRE NOSOTROS ── */
+        .sobre-hero { width: 100%; background: linear-gradient(160deg, var(--purple) 0%, var(--purple2) 100%); padding: 30px 24px; text-align: center; position: relative; overflow: hidden; }
+        .sobre-hero::before { content: '🐾'; position: absolute; font-size: 100px; opacity: 0.07; left: -20px; top: 10px; }
+        .sobre-logo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--orange); box-shadow: 0 0 0 4px rgba(255,154,69,0.3); margin-bottom: 14px; }
+        .sobre-nombre { font-size: 28px; font-weight: 900; color: white; }
+        .sobre-nombre span { color: var(--orange2); }
+        .sobre-slogan { background: var(--orange); color: white; font-size: 11px; font-weight: 800; letter-spacing: 2px; padding: 6px 18px; border-radius: 20px; display: inline-block; margin-top: 10px; }
+        .sobre-card { width: calc(100% - 32px); margin: 14px 16px 0; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .sobre-card-titulo { font-size: 15px; font-weight: 900; color: var(--purple); margin-bottom: 10px; }
+        .sobre-card-txt { font-size: 13px; font-weight: 600; color: var(--text2); line-height: 1.7; }
+        .valores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+        .valor-item { background: var(--purple-light); border-radius: 14px; padding: 14px; text-align: center; }
+        .valor-emoji { font-size: 28px; display: block; margin-bottom: 5px; }
+        .valor-nombre { font-size: 12px; font-weight: 900; color: var(--purple); }
+        .valor-desc { font-size: 10px; font-weight: 600; color: var(--text2); margin-top: 3px; }
+        .envio-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0e6ff; }
+        .envio-item:last-child { border-bottom: none; }
+        .envio-emoji { font-size: 24px; flex-shrink: 0; }
+        .envio-titulo { font-size: 12px; font-weight: 900; color: var(--purple); }
+        .envio-desc { font-size: 11px; font-weight: 600; color: var(--text2); margin-top: 2px; line-height: 1.5; }
+
+        /* ── BTN VOLVER ── */
+        .btn-volver { margin: 20px 16px 0; width: calc(100% - 32px); background: white; border: 3px solid var(--purple); color: var(--purple); padding: 13px; border-radius: 16px; font-size: 14px; font-weight: 900; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-volver:active { background: var(--purple); color: white; }
+
+        /* ── PIE ── */
+        .pie { width: 100%; background: linear-gradient(135deg, var(--purple) 0%, #3d0060 100%); padding: 24px 20px; text-align: center; margin-top: 32px; }
+        .pie-animales { font-size: 28px; margin-bottom: 8px; letter-spacing: 4px; }
+        .pie-nombre { font-weight: 900; font-size: 18px; color: white; }
+        .pie-nombre span { color: var(--orange2); }
+        .pie-slogan { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- ══ MENÚ PRINCIPAL ══ -->
+<div id="pantalla-menu" class="pantalla activa">
+    <div class="header">
+        <div class="header-patas p1">🐾</div>
+        <div class="header-patas p2">🐾</div>
+        <img class="header-logo" src="LOGO 1.png" alt="Mas Motas">
+        <div class="header-nombre">Mas<span>motas</span></div>
+        <div class="header-sub">Pet Shop</div>
+        <div class="header-slogan">❤️ Amor · Cuidado · Felicidad ❤️</div>
+    </div>
+
+    <!-- BIENVENIDA -->
+    <div class="bienvenida">
+        <div class="bienvenida-emoji">🐶🐱</div>
+        <div>
+            <div class="bienvenida-titulo">¡Bienvenido a Mas Motas! 🐾</div>
+            <div class="bienvenida-desc">Donde tu mascota es lo más importante. Todo lo que necesitan tus peludos con amor, cuidado y felicidad.</div>
+        </div>
+    </div>
+
+    <!-- PROMO DEL MES -->
+    <div class="promo-card">
+        <div class="promo-badge">⭐ PROMO DEL MES</div>
+        <div class="promo-titulo">¡Combo Ahorro para tu Peludo!</div>
+        <div class="promo-desc">Bulto de alimento + snacks seleccionados. Pregúntanos por WhatsApp por nuestros combos especiales del mes 🐾</div>
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="seccion-header">
+        <span class="seccion-emoji">🔍</span>
+        <span class="seccion-titulo">Buscar Producto</span>
+        <div class="seccion-linea"></div>
+    </div>
+    <div class="buscador-box">
+        <span class="buscador-icon">🔍</span>
+        <input class="buscador-input" type="text" placeholder="Ej: Dog Chow, Arena, Collar..." oninput="buscar(this.value)" onclick="buscar(this.value)">
+        <div class="buscador-resultados" id="buscador-resultados"></div>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="seccion-header">
+        <span class="seccion-emoji">🛍️</span>
+        <span class="seccion-titulo">Nuestros Productos</span>
+        <div class="seccion-linea"></div>
+    </div>
+    <div class="grid-cats">
+        <div class="cat-card c1" onclick="mostrarCat('comida-granel')"><span class="cat-emoji">🌾</span><span class="cat-nombre">Comida a Granel</span><span class="cat-cantidad">16 productos</span></div>
+        <div class="cat-card c2" onclick="mostrarCat('comida-paquete')"><span class="cat-emoji">📦</span><span class="cat-nombre">Comida en Paquete</span><span class="cat-cantidad">29 productos</span></div>
+        <div class="cat-card c3" onclick="mostrarCat('snacks')"><span class="cat-emoji">🦴</span><span class="cat-nombre">Snacks y Comida Suelta</span><span class="cat-cantidad">9 productos</span></div>
+        <div class="cat-card c4" onclick="mostrarCat('arena')"><span class="cat-emoji">🪣</span><span class="cat-nombre">Arena para Gato</span><span class="cat-cantidad">3 referencias</span></div>
+        <div class="cat-card c5" onclick="mostrarCat('accesorios')"><span class="cat-emoji">🎽</span><span class="cat-nombre">Accesorios</span><span class="cat-cantidad">50+ productos</span></div>
+        <div class="cat-card c6" onclick="mostrarCat('platos')"><span class="cat-emoji">🍽️</span><span class="cat-nombre">Platos y Guacales</span><span class="cat-cantidad">20 productos</span></div>
+        <div class="cat-card c7" onclick="mostrarCat('medicamentos')"><span class="cat-emoji">💊</span><span class="cat-nombre">Medicamentos y Aseo</span><span class="cat-cantidad">30 productos</span></div>
+        <div class="cat-card c8" onclick="mostrarPantalla('pantalla-nosotros')"><span class="cat-emoji">🏪</span><span class="cat-nombre">Sobre Nosotros</span><span class="cat-cantidad">¡Conócenos!</span></div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div class="seccion-header"><span class="seccion-emoji">💬</span><span class="seccion-titulo">Contáctanos</span><div class="seccion-linea"></div></div>
+    <!-- ⬇️ Aquí se agregó el mensaje predeterminado en el botón principal ⬇️ -->
+    <a href="https://wa.me/573138585000?text=¡Hola%20Mas%20Motas!%20🐾%20Estuve%20viendo%20su%20catálogo%20virtual%20y%20me%20gustaría%20hacer%20una%20consulta." target="_blank" class="ws-grande">
+        <div class="ws-icono">📲</div>
+        <div>
+            <div class="ws-titulo">WhatsApp</div>
+            <div class="ws-desc">¡Escríbenos directamente para hacer tu pedido o resolver tus dudas!</div>
+        </div>
+    </a>
+
+    <!-- REDES -->
+    <div class="seccion-header"><span class="seccion-emoji">📱</span><span class="seccion-titulo">Redes Sociales</span><div class="seccion-linea"></div></div>
+    <div class="redes-wrap">
+        <div class="red-card"><span class="red-emoji">📸</span><span class="red-nombre">Instagram</span><span class="red-pronto">PRÓXIMAMENTE</span></div>
+        <div class="red-card"><span class="red-emoji">🎵</span><span class="red-nombre">TikTok</span><span class="red-pronto">PRÓXIMAMENTE</span></div>
+        <div class="red-card"><span class="red-emoji">👥</span><span class="red-nombre">Facebook</span><span class="red-pronto">PRÓXIMAMENTE</span></div>
+    </div>
+
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div><div class="pie-slogan">Amor · Cuidado · Felicidad · Bogotá 🇨🇴</div></div>
+</div>
+
+<!-- ══ CARRITO ══ -->
+<div id="pantalla-carrito" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🛒 Mi Pedido</span>
+    </div>
+    <div style="width:calc(100% - 32px); margin: 16px 16px 0;">
+        <div id="carrito-lista"></div>
+        <div id="carrito-vacio" class="carrito-vacio" style="display:none;">
+            <span>🛒</span>
+            <p>Tu pedido está vacío<br><small style="font-weight:600;color:#bba8cc;">Agrega productos desde el catálogo</small></p>
+        </div>
+        <div id="carrito-acciones" style="display:none; margin-top:14px;">
+            <button class="btn-enviar-pedido" onclick="enviarPedido()">
+                <span>📲</span> Enviar Pedido por WhatsApp
+            </button>
+            <button class="btn-vaciar" onclick="vaciarCarrito()">🗑️ Vaciar pedido</button>
+        </div>
+    </div>
+    <div class="pie" style="margin-top:32px;"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ SOBRE NOSOTROS ══ -->
+<div id="pantalla-nosotros" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🏪 Sobre Nosotros</span>
+    </div>
+    <div class="sobre-hero">
+        <img class="sobre-logo" src="LOGO 1.png" alt="Mas Motas">
+        <div class="sobre-nombre">Mas<span>motas</span></div>
+        <div class="sobre-slogan">❤️ Amor · Cuidado · Felicidad</div>
+    </div>
+    <div class="sobre-card">
+        <div class="sobre-card-titulo">🐾 ¿Quiénes somos?</div>
+        <div class="sobre-card-txt">Somos <strong>Mas Motas Pet Shop</strong>, una tienda dedicada con todo el amor del mundo a nuestras mascotas. Creemos que los peludos de la familia merecen lo mejor — desde su alimentación hasta sus juguetes y accesorios. Nacemos en Bogotá con el sueño de ser el lugar de confianza para cada dueño de mascota.</div>
+    </div>
+    <div class="sobre-card">
+        <div class="sobre-card-titulo">💜 Nuestra Misión</div>
+        <div class="sobre-card-txt">Brindar productos de calidad para el bienestar de perros y gatos, con precios justos y un servicio lleno de amor. Porque cuando tu mascota está feliz, tú también lo estás. 🐶🐱</div>
+    </div>
+    <div class="sobre-card">
+        <div class="sobre-card-titulo">✨ Nuestros Valores</div>
+        <div class="valores-grid">
+            <div class="valor-item"><span class="valor-emoji">❤️</span><div class="valor-nombre">Amor</div><div class="valor-desc">Cada producto elegido con cariño</div></div>
+            <div class="valor-item"><span class="valor-emoji">🛡️</span><div class="valor-nombre">Cuidado</div><div class="valor-desc">La salud de tu mascota primero</div></div>
+            <div class="valor-item"><span class="valor-emoji">😊</span><div class="valor-nombre">Felicidad</div><div class="valor-desc">Porque merecen lo mejor</div></div>
+            <div class="valor-item"><span class="valor-emoji">🤝</span><div class="valor-nombre">Confianza</div><div class="valor-desc">Tu aliado de confianza</div></div>
+        </div>
+    </div>
+    <div class="sobre-card">
+        <div class="sobre-card-titulo">🚚 Envíos y Entregas</div>
+        <div class="envio-item"><span class="envio-emoji">📍</span><div><div class="envio-titulo">Zona de cobertura</div><div class="envio-desc">Actualmente realizamos entregas en Bogotá. Próximamente ampliaremos cobertura a municipios aledaños.</div></div></div>
+        <div class="envio-item"><span class="envio-emoji">💰</span><div><div class="envio-titulo">Costo de domicilio</div><div class="envio-desc">El costo de envío varía según la zona. Consúltanos por WhatsApp para conocer el valor exacto a tu dirección.</div></div></div>
+        <div class="envio-item"><span class="envio-emoji">⏱️</span><div><div class="envio-titulo">Tiempo de entrega</div><div class="envio-desc">Entregas en el mismo día o al día siguiente dependiendo de la disponibilidad y la zona.</div></div></div>
+        <div class="envio-item"><span class="envio-emoji">🏪</span><div><div class="envio-titulo">Recogida en tienda</div><div class="envio-desc">También puedes coordinar la recogida directa. ¡Pregúntanos por WhatsApp!</div></div></div>
+    </div>
+    <div class="pie" style="margin-top:32px;"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ COMIDA A GRANEL ══ -->
+<div id="pantalla-comida-granel" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🌾 Comida a Granel</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge" id="badge-granel">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','comida-granel')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','comida-granel')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','comida-granel')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🌾</span><span class="seccion-titulo">Comida a Granel</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Para Perro</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Chunky Perro</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Chunky Perro','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Ringo</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Ringo','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Dog Chow</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Dog Chow','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Don Kan</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Don Kan','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Monello Perro</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Monello Perro','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Don Kan Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><button class="btn-add" onclick="addCarrito('Don Kan Cachorro','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Dog Chow Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><button class="btn-add" onclick="addCarrito('Dog Chow Cachorro','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🐶</span><div class="producto-info"><div class="producto-nombre">Dogourmet Cachorro</div><div class="producto-detalle">Comida granel · Cachorro</div></div><button class="btn-add" onclick="addCarrito('Dogourmet Cachorro','comida-granel',this)">+</button></div>
+        <div class="subcategoria-titulo">🐱 Para Gato</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Mirringo</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Mirringo','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Don Kat</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Don Kat','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Chunky Gato</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Chunky Gato','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Monello Gato</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Monello Gato','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌾</span><div class="producto-info"><div class="producto-nombre">Cat Chow</div><div class="producto-detalle">Comida granel · Bulto</div></div><button class="btn-add" onclick="addCarrito('Cat Chow','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🐱</span><div class="producto-info"><div class="producto-nombre">Don Kat Gatito</div><div class="producto-detalle">Comida granel · Gatito</div></div><button class="btn-add" onclick="addCarrito('Don Kat Gatito','comida-granel',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🐱</span><div class="producto-info"><div class="producto-nombre">Chunky Gatito</div><div class="producto-detalle">Comida granel · Gatito</div></div><button class="btn-add" onclick="addCarrito('Chunky Gatito','comida-granel',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ COMIDA PAQUETE ══ -->
+<div id="pantalla-comida-paquete" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">📦 Comida en Paquete</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','comida-paquete')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','comida-paquete')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','comida-paquete')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">📦</span><span class="seccion-titulo">Comida en Paquete</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Paquetes Perro</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Dog Chow Raza Pequeña</div><div class="producto-detalle">Paquete · Raza pequeña</div></div><button class="btn-add" onclick="addCarrito('Dog Chow Raza Pequeña','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Perro</div><div class="producto-detalle">Paquete premium</div></div><button class="btn-add" onclick="addCarrito('BR Perro','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Monello Perro</div><div class="producto-detalle">Paquete</div></div><button class="btn-add" onclick="addCarrito('Monello Perro Paquete','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Dog Chow</div><div class="producto-detalle">Sobre húmedo perro</div></div><button class="btn-add" onclick="addCarrito('Sobre Dog Chow','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Chonky Perro Sobre</div><div class="producto-detalle">Sobre húmedo perro</div></div><button class="btn-add" onclick="addCarrito('Chonky Perro Sobre','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Wow con Sobre</div><div class="producto-detalle">Sobre húmedo perro</div></div><button class="btn-add" onclick="addCarrito('Wow con Sobre','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Perro Paq x5</div><div class="producto-detalle">Cremoso · paquete x5</div></div><button class="btn-add" onclick="addCarrito('Cremoso Perro Paq x5','comida-paquete',this)">+</button></div>
+        <div class="subcategoria-titulo">🐱 Paquetes Gato</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">Monello Gato</div><div class="producto-detalle">Paquete</div></div><button class="btn-add" onclick="addCarrito('Monello Gato Paquete','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gatito</div><div class="producto-detalle">Paquete · Gatito</div></div><button class="btn-add" onclick="addCarrito('BR Gatito','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gato Adulto</div><div class="producto-detalle">Paquete · Adulto</div></div><button class="btn-add" onclick="addCarrito('BR Gato Adulto','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📦</span><div class="producto-info"><div class="producto-nombre">BR Gato Castrado</div><div class="producto-detalle">Paquete · Castrado</div></div><button class="btn-add" onclick="addCarrito('BR Gato Castrado','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato Paq x5</div><div class="producto-detalle">Cremoso · paquete x5</div></div><button class="btn-add" onclick="addCarrito('Cremoso Gato Paq x5','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato x Unidad</div><div class="producto-detalle">Cremoso · por unidad</div></div><button class="btn-add" onclick="addCarrito('Cremoso Gato x Unidad','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Cremoso Gato Muau</div><div class="producto-detalle">Cremoso Muau</div></div><button class="btn-add" onclick="addCarrito('Cremoso Gato Muau','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Chunky Gato</div><div class="producto-detalle">Sobre húmedo gato</div></div><button class="btn-add" onclick="addCarrito('Sobre Chunky Gato','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Felix</div><div class="producto-detalle">Sobre húmedo gato</div></div><button class="btn-add" onclick="addCarrito('Sobre Felix','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥩</span><div class="producto-info"><div class="producto-nombre">Sobre Fancy Gato</div><div class="producto-detalle">Sobre húmedo gato</div></div><button class="btn-add" onclick="addCarrito('Sobre Fancy Gato','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥫</span><div class="producto-info"><div class="producto-nombre">Lata Felix</div><div class="producto-detalle">Lata húmedo gato</div></div><button class="btn-add" onclick="addCarrito('Lata Felix','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🐟</span><div class="producto-info"><div class="producto-nombre">Felix Paq x 200g</div><div class="producto-detalle">Paquete 200g</div></div><button class="btn-add" onclick="addCarrito('Felix Paq x 200g','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galletas Kelcat Paq</div><div class="producto-detalle">Galletas para gato</div></div><button class="btn-add" onclick="addCarrito('Galletas Kelcat Paq','comida-paquete',this)">+</button></div>
+        <div class="subcategoria-titulo">🦴 Snacks Empacados</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Tráquea Paq</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Tráquea Paq','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Pernil Cerdo Unidad</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Pernil Cerdo Unidad','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesitos Malla</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Huesitos Malla','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesos Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Huesos Carnaza','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Pernil Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Pernil Carnaza','comida-paquete',this)">+</button></div>
+        <div class="subcategoria-titulo">🍪 Galletas</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Leche</div><div class="producto-detalle">Galleta para perro</div></div><button class="btn-add" onclick="addCarrito('Galleta Leche','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Arena</div><div class="producto-detalle">Galleta para perro</div></div><button class="btn-add" onclick="addCarrito('Galleta Arena','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍪</span><div class="producto-info"><div class="producto-nombre">Galleta Pollo</div><div class="producto-detalle">Galleta para perro</div></div><button class="btn-add" onclick="addCarrito('Galleta Pollo','comida-paquete',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🥛</span><div class="producto-info"><div class="producto-nombre">Frasco Leche</div><div class="producto-detalle">Leche para mascotas</div></div><button class="btn-add" onclick="addCarrito('Frasco Leche','comida-paquete',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ SNACKS ══ -->
+<div id="pantalla-snacks" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🦴 Snacks y Comida Suelta</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','snacks')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','snacks')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','snacks')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🦴</span><span class="seccion-titulo">Snacks y Comida Suelta</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐶 Comida Suelta Perro</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍖</span><div class="producto-info"><div class="producto-nombre">Costillas Ahumadas</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Costillas Ahumadas','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Barquillos Ahumados</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Barquillos Ahumados','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🐔</span><div class="producto-info"><div class="producto-nombre">Palitos Hígado Pollo</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Palitos Hígado Pollo','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Huesitos Ahumados</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Huesitos Ahumados','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Limpia Dientes</div><div class="producto-detalle">Snack dental perro</div></div><button class="btn-add" onclick="addCarrito('Limpia Dientes','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🐷</span><div class="producto-info"><div class="producto-nombre">Orejas Cerdo</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Orejas Cerdo','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦴</span><div class="producto-info"><div class="producto-nombre">Cabanos Carnaza</div><div class="producto-detalle">Snack natural perro</div></div><button class="btn-add" onclick="addCarrito('Cabanos Carnaza','snacks',this)">+</button></div>
+        <div class="subcategoria-titulo">🐱 Snacks Gato</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🎱</span><div class="producto-info"><div class="producto-nombre">Galletas Bola Pelo Gato</div><div class="producto-detalle">Control bola de pelo</div></div><button class="btn-add" onclick="addCarrito('Galletas Bola Pelo Gato','snacks',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🍮</span><div class="producto-info"><div class="producto-nombre">Pudines Gato</div><div class="producto-detalle">Snack cremoso gato</div></div><button class="btn-add" onclick="addCarrito('Pudines Gato','snacks',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ ARENA ══ -->
+<div id="pantalla-arena" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🪣 Arena para Gato</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🪣</span><span class="seccion-titulo">Arena para Gato</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🐱 Arenas Disponibles</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🎃</span><div class="producto-info"><div class="producto-nombre">Arena Calabaza</div><div class="producto-detalle">4.5 kg · 10 unidades</div></div><button class="btn-add" onclick="addCarrito('Arena Calabaza','arena',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌽</span><div class="producto-info"><div class="producto-nombre">Arena Maíz</div><div class="producto-detalle">4 kg · Biodegradable</div></div><button class="btn-add" onclick="addCarrito('Arena Maíz','arena',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Arena Tofu</div><div class="producto-detalle">2.5 kg · Natural</div></div><button class="btn-add" onclick="addCarrito('Arena Tofu','arena',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ ACCESORIOS ══ -->
+<div id="pantalla-accesorios" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🎽 Accesorios</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','accesorios')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','accesorios')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','accesorios')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🎽</span><span class="seccion-titulo">Accesorios</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">🧴 Aseo y Cuidado</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🪣</span><div class="producto-info"><div class="producto-nombre">Pala Plástica Arena</div><div class="producto-detalle">Para arenero gato</div></div><button class="btn-add" onclick="addCarrito('Pala Plástica Arena','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🪣</span><div class="producto-info"><div class="producto-nombre">Pala Plástica Perro</div><div class="producto-detalle">Recoge heces</div></div><button class="btn-add" onclick="addCarrito('Pala Plástica Perro','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧹</span><div class="producto-info"><div class="producto-nombre">Rodillo Quita Pelos</div><div class="producto-detalle">Ropa y muebles</div></div><button class="btn-add" onclick="addCarrito('Rodillo Quita Pelos','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🔄</span><div class="producto-info"><div class="producto-nombre">Repuesto Rodillo Quita Pelos</div><div class="producto-detalle">Recambio</div></div><button class="btn-add" onclick="addCarrito('Repuesto Rodillo','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Cepillo Dental Pequeño</div><div class="producto-detalle">Higiene dental</div></div><button class="btn-add" onclick="addCarrito('Cepillo Dental Pequeño','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦷</span><div class="producto-info"><div class="producto-nombre">Cepillo Dental Grande</div><div class="producto-detalle">Higiene dental</div></div><button class="btn-add" onclick="addCarrito('Cepillo Dental Grande','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧤</span><div class="producto-info"><div class="producto-nombre">Guante Peinar Perro-Gato</div><div class="producto-detalle">Cepillado masaje</div></div><button class="btn-add" onclick="addCarrito('Guante Peinar','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🪮</span><div class="producto-info"><div class="producto-nombre">Cepillo Peinar Sencillo</div><div class="producto-detalle">Cepillo pelo</div></div><button class="btn-add" onclick="addCarrito('Cepillo Peinar Sencillo','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🪮</span><div class="producto-info"><div class="producto-nombre">Cepillo Peinar Premium</div><div class="producto-detalle">Cepillo profesional</div></div><button class="btn-add" onclick="addCarrito('Cepillo Peinar Premium','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">✂️</span><div class="producto-info"><div class="producto-nombre">Cortauñas Sencillo</div><div class="producto-detalle">Corte de uñas</div></div><button class="btn-add" onclick="addCarrito('Cortauñas Sencillo','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">✂️</span><div class="producto-info"><div class="producto-nombre">Cortauñas Grande</div><div class="producto-detalle">Uñas perro grande</div></div><button class="btn-add" onclick="addCarrito('Cortauñas Grande','accesorios',this)">+</button></div>
+        <div class="subcategoria-titulo">🎾 Juguetes Perro</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🪢</span><div class="producto-info"><div class="producto-nombre">Juguete con Cuerda</div><div class="producto-detalle">Juguete interactivo</div></div><button class="btn-add" onclick="addCarrito('Juguete con Cuerda','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🎾</span><div class="producto-info"><div class="producto-nombre">Pelota Tenis</div><div class="producto-detalle">Juguete perro</div></div><button class="btn-add" onclick="addCarrito('Pelota Tenis','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🧸</span><div class="producto-info"><div class="producto-nombre">Peluche Pequeño</div><div class="producto-detalle">Juguete perro</div></div><button class="btn-add" onclick="addCarrito('Peluche Pequeño','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🧸</span><div class="producto-info"><div class="producto-nombre">Peluche Grande</div><div class="producto-detalle">Juguete perro</div></div><button class="btn-add" onclick="addCarrito('Peluche Grande','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">⚽</span><div class="producto-info"><div class="producto-nombre">Pelota Grande Portasnack</div><div class="producto-detalle">Juguete interactivo</div></div><button class="btn-add" onclick="addCarrito('Pelota Portasnack','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🥏</span><div class="producto-info"><div class="producto-nombre">Frisbee</div><div class="producto-detalle">Disco volador</div></div><button class="btn-add" onclick="addCarrito('Frisbee','accesorios',this)">+</button></div>
+        <div class="subcategoria-titulo">🐱 Juguetes Gato</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🎣</span><div class="producto-info"><div class="producto-nombre">Cañas Gato</div><div class="producto-detalle">Juguete interactivo</div></div><button class="btn-add" onclick="addCarrito('Cañas Gato','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌿</span><div class="producto-info"><div class="producto-nombre">Catnip</div><div class="producto-detalle">Hierba gatera</div></div><button class="btn-add" onclick="addCarrito('Catnip','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Gimnasio Gato</div><div class="producto-detalle">Torre rascador completo</div></div><button class="btn-add" onclick="addCarrito('Gimnasio Gato','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🐭</span><div class="producto-info"><div class="producto-nombre">Ratón Resorte</div><div class="producto-detalle">Juguete gato</div></div><button class="btn-add" onclick="addCarrito('Ratón Resorte','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🥊</span><div class="producto-info"><div class="producto-nombre">Bola Boxeador Gato</div><div class="producto-detalle">Juguete interactivo</div></div><button class="btn-add" onclick="addCarrito('Bola Boxeador Gato','accesorios',this)">+</button></div>
+        <div class="subcategoria-titulo">🎀 Collares · Correas · Ropa</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collares Gato</div><div class="producto-detalle">Collar para gato</div></div><button class="btn-add" onclick="addCarrito('Collar Gato','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Gato Silicona</div><div class="producto-detalle">Silicona suave</div></div><button class="btn-add" onclick="addCarrito('Collar Gato Silicona','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Perro</div><div class="producto-detalle">Collar para perro</div></div><button class="btn-add" onclick="addCarrito('Collar Perro','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">💡</span><div class="producto-info"><div class="producto-nombre">Collar Perro con Luz</div><div class="producto-detalle">LED seguridad</div></div><button class="btn-add" onclick="addCarrito('Collar con Luz','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🎀</span><div class="producto-info"><div class="producto-nombre">Pañoleta Sencilla</div><div class="producto-detalle">Accesorio moda</div></div><button class="btn-add" onclick="addCarrito('Pañoleta Sencilla','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🦺</span><div class="producto-info"><div class="producto-nombre">Pechera Pequeña</div><div class="producto-detalle">Arnés pequeño</div></div><button class="btn-add" onclick="addCarrito('Pechera Pequeña','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🔗</span><div class="producto-info"><div class="producto-nombre">Correa Sola</div><div class="producto-detalle">Correa para paseo</div></div><button class="btn-add" onclick="addCarrito('Correa Sola','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">😷</span><div class="producto-info"><div class="producto-nombre">Bozal Grande</div><div class="producto-detalle">Bozal perro grande</div></div><button class="btn-add" onclick="addCarrito('Bozal Grande','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">😷</span><div class="producto-info"><div class="producto-nombre">Bozal Pequeño</div><div class="producto-detalle">Bozal perro pequeño</div></div><button class="btn-add" onclick="addCarrito('Bozal Pequeño','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🎒</span><div class="producto-info"><div class="producto-nombre">Cargador Perro</div><div class="producto-detalle">Mochila cargador</div></div><button class="btn-add" onclick="addCarrito('Cargador Perro','accesorios',this)">+</button></div>
+        <div class="subcategoria-titulo">🛍️ Bolsas e Higiene</div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Porta Bolsas</div><div class="producto-detalle">Dispensador bolsas</div></div><button class="btn-add" onclick="addCarrito('Porta Bolsas','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x3</div><div class="producto-detalle">Bolsas recoge heces</div></div><button class="btn-add" onclick="addCarrito('Paq Bolsas x3','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x6</div><div class="producto-detalle">Bolsas recoge heces</div></div><button class="btn-add" onclick="addCarrito('Paq Bolsas x6','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🛍️</span><div class="producto-info"><div class="producto-nombre">Paq Bolsas x10</div><div class="producto-detalle">Bolsas recoge heces</div></div><button class="btn-add" onclick="addCarrito('Paq Bolsas x10','accesorios',this)">+</button></div>
+        <div class="subcategoria-titulo">🏠 Otros</div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Arenera Cubierta</div><div class="producto-detalle">Baño gato cubierto</div></div><button class="btn-add" onclick="addCarrito('Arenera Cubierta','accesorios',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Arenera Sencilla</div><div class="producto-detalle">Baño gato abierto</div></div><button class="btn-add" onclick="addCarrito('Arenera Sencilla','accesorios',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ PLATOS ══ -->
+<div id="pantalla-platos" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">🍽️ Platos y Guacales</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','platos')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','platos')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','platos')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">🍽️</span><span class="seccion-titulo">Platos y Guacales</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">💧 Dispensadores y Fuentes</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🚰</span><div class="producto-info"><div class="producto-nombre">Dispensador Comida-Agua</div><div class="producto-detalle">Doble dispensador</div></div><button class="btn-add" onclick="addCarrito('Dispensador Comida-Agua','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">⛲</span><div class="producto-info"><div class="producto-nombre">Fuente Agua Eléctrica</div><div class="producto-detalle">Fuente eléctrica</div></div><button class="btn-add" onclick="addCarrito('Fuente Agua Eléctrica','platos',this)">+</button></div>
+        <div class="subcategoria-titulo">🍽️ Platos</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🌸</span><div class="producto-info"><div class="producto-nombre">Plato Agua Flor</div><div class="producto-detalle">Diseño floral</div></div><button class="btn-add" onclick="addCarrito('Plato Agua Flor','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Acrílico</div><div class="producto-detalle">Doble compartimento</div></div><button class="btn-add" onclick="addCarrito('Plato Doble Acrílico','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Plástico Gato</div><div class="producto-detalle">Para gato</div></div><button class="btn-add" onclick="addCarrito('Plato Doble Plástico Gato','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Sencillo Gato</div><div class="producto-detalle">Individual gato</div></div><button class="btn-add" onclick="addCarrito('Plato Sencillo Gato','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Doble Plástico Grande</div><div class="producto-detalle">Para perro grande</div></div><button class="btn-add" onclick="addCarrito('Plato Doble Grande','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Grande</div><div class="producto-detalle">Previene comer rápido</div></div><button class="btn-add" onclick="addCarrito('Plato Antirreflujo Grande','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Mediano</div><div class="producto-detalle">Previene comer rápido</div></div><button class="btn-add" onclick="addCarrito('Plato Antirreflujo Mediano','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🍽️</span><div class="producto-info"><div class="producto-nombre">Plato Antirreflujo Pequeño</div><div class="producto-detalle">Previene comer rápido</div></div><button class="btn-add" onclick="addCarrito('Plato Antirreflujo Pequeño','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">⚙️</span><div class="producto-info"><div class="producto-nombre">Plato Acero</div><div class="producto-detalle">Acero inoxidable</div></div><button class="btn-add" onclick="addCarrito('Plato Acero','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🎒</span><div class="producto-info"><div class="producto-nombre">Plato Portátil Pequeño</div><div class="producto-detalle">Para viajes</div></div><button class="btn-add" onclick="addCarrito('Plato Portátil','platos',this)">+</button></div>
+        <div class="subcategoria-titulo">🏠 Guacales</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Pequeño</div><div class="producto-detalle">Transporte pequeño</div></div><button class="btn-add" onclick="addCarrito('Guacal Pequeño','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Mediano</div><div class="producto-detalle">Transporte mediano</div></div><button class="btn-add" onclick="addCarrito('Guacal Mediano','platos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🏠</span><div class="producto-info"><div class="producto-nombre">Guacal Grande</div><div class="producto-detalle">Transporte grande</div></div><button class="btn-add" onclick="addCarrito('Guacal Grande','platos',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ MEDICAMENTOS ══ -->
+<div id="pantalla-medicamentos" class="pantalla">
+    <div class="sticky-header">
+        <button class="sticky-back" onclick="mostrarPantalla('pantalla-menu')">←</button>
+        <span class="sticky-titulo">💊 Medicamentos y Aseo</span>
+        <button class="sticky-carrito" onclick="mostrarPantalla('pantalla-carrito')">🛒 <span class="carrito-badge">0</span></button>
+    </div>
+    <div class="filtros-cat">
+        <button class="filtro-cat-btn activo" onclick="filtrarCat(this,'todos','medicamentos')">🐾 Todos</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'perro','medicamentos')">🐶 Perro</button>
+        <button class="filtro-cat-btn" onclick="filtrarCat(this,'gato','medicamentos')">🐱 Gato</button>
+    </div>
+    <div class="seccion-header"><span class="seccion-emoji">💊</span><span class="seccion-titulo">Medicamentos y Aseo</span><div class="seccion-linea"></div></div>
+    <div class="productos-wrap">
+        <div class="subcategoria-titulo">💊 Medicamentos</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">💊</span><div class="producto-info"><div class="producto-nombre">Purgante Suspensión</div><div class="producto-detalle">Antiparasitario líquido</div></div><button class="btn-add" onclick="addCarrito('Purgante Suspensión','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">💊</span><div class="producto-info"><div class="producto-nombre">Purgante Pastas</div><div class="producto-detalle">Antiparasitario pasta</div></div><button class="btn-add" onclick="addCarrito('Purgante Pastas','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🐛</span><div class="producto-info"><div class="producto-nombre">Antipulgas Pipeta</div><div class="producto-detalle">Pipeta antipulgas</div></div><button class="btn-add" onclick="addCarrito('Antipulgas Pipeta','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">📿</span><div class="producto-info"><div class="producto-nombre">Collar Antipulgas</div><div class="producto-detalle">Collar repelente</div></div><button class="btn-add" onclick="addCarrito('Collar Antipulgas','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🐛</span><div class="producto-info"><div class="producto-nombre">Antipulgas Gotas</div><div class="producto-detalle">Gotas antipulgas</div></div><button class="btn-add" onclick="addCarrito('Antipulgas Gotas','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">💧</span><div class="producto-info"><div class="producto-nombre">Suero Sobre</div><div class="producto-detalle">Suero rehidratante</div></div><button class="btn-add" onclick="addCarrito('Suero Sobre','medicamentos',this)">+</button></div>
+        <div class="subcategoria-titulo">🧴 Aseo y Baño</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Sobre Medicado</div><div class="producto-detalle">Shampú medicado</div></div><button class="btn-add" onclick="addCarrito('Shampú Medicado','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Sobre Limpieza</div><div class="producto-detalle">Shampú limpieza</div></div><button class="btn-add" onclick="addCarrito('Shampú Limpieza','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧴</span><div class="producto-info"><div class="producto-nombre">Shampú Famo</div><div class="producto-detalle">Shampú frasco completo</div></div><button class="btn-add" onclick="addCarrito('Shampú Famo','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🌬️</span><div class="producto-info"><div class="producto-nombre">Baño Seco Antipulgas</div><div class="producto-detalle">Baño sin agua</div></div><button class="btn-add" onclick="addCarrito('Baño Seco Antipulgas','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧻</span><div class="producto-info"><div class="producto-nombre">Pañitos Húmedos Grande</div><div class="producto-detalle">Toallitas húmedas</div></div><button class="btn-add" onclick="addCarrito('Pañitos Húmedos Grande','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🧻</span><div class="producto-info"><div class="producto-nombre">Pañitos Húmedos Pequeño</div><div class="producto-detalle">Toallitas húmedas</div></div><button class="btn-add" onclick="addCarrito('Pañitos Húmedos Pequeño','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🌺</span><div class="producto-info"><div class="producto-nombre">Perfume Perro Grande</div><div class="producto-detalle">Fragancia para perro</div></div><button class="btn-add" onclick="addCarrito('Perfume Perro','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="gato"><span class="producto-emoji">🌺</span><div class="producto-info"><div class="producto-nombre">Perfume Gato Pequeño</div><div class="producto-detalle">Fragancia para gato</div></div><button class="btn-add" onclick="addCarrito('Perfume Gato','medicamentos',this)">+</button></div>
+        <div class="subcategoria-titulo">✨ Otros</div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">💇</span><div class="producto-info"><div class="producto-nombre">Vitamina Pelo</div><div class="producto-detalle">Pelo brillante y sano</div></div><button class="btn-add" onclick="addCarrito('Vitamina Pelo','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🌸</span><div class="producto-info"><div class="producto-nombre">Perlas Antiolor</div><div class="producto-detalle">Elimina olores</div></div><button class="btn-add" onclick="addCarrito('Perlas Antiolor','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🩲</span><div class="producto-info"><div class="producto-nombre">Pañal Perro</div><div class="producto-detalle">Pañal descartable</div></div><button class="btn-add" onclick="addCarrito('Pañal Perro','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="perro"><span class="producto-emoji">🟫</span><div class="producto-info"><div class="producto-nombre">Tapete Cachero</div><div class="producto-detalle">Tapete entrenamiento</div></div><button class="btn-add" onclick="addCarrito('Tapete Cachero','medicamentos',this)">+</button></div>
+        <div class="producto-item" data-tipo="ambos"><span class="producto-emoji">🔵</span><div class="producto-info"><div class="producto-nombre">Cono Isabelino</div><div class="producto-detalle">Collar recuperación</div></div><button class="btn-add" onclick="addCarrito('Cono Isabelino','medicamentos',this)">+</button></div>
+    </div>
+    <button class="btn-volver" onclick="mostrarPantalla('pantalla-menu')">🏠 Volver al menú</button>
+    <div class="pie"><div class="pie-animales">🐶 🐱 🐾</div><div class="pie-nombre">Mas<span>motas</span> Pet Shop</div></div>
+</div>
+
+<!-- ══ CARRITO FLOTANTE ══ -->
+<div class="carrito-flotante" id="carrito-flotante">
+    <div class="carrito-info">
+        <span class="carrito-count" id="carrito-count-txt">0 productos</span>
+        <span class="carrito-label">Mi Pedido 🛒</span>
+    </div>
+    <button class="btn-ver-carrito" onclick="mostrarPantalla('pantalla-carrito')">Ver pedido →</button>
+</div>
+
+<script>
+    // ── BASE DE DATOS BÚSQUEDA ──
+    const todosProductos = [
+        {n:'Chunky Perro',e:'🌾',c:'Comida a Granel'},{n:'Ringo',e:'🌾',c:'Comida a Granel'},
+        {n:'Dog Chow',e:'🌾',c:'Comida a Granel'},{n:'Don Kan',e:'🌾',c:'Comida a Granel'},
+        {n:'Monello Perro',e:'🌾',c:'Comida a Granel'},{n:'Don Kan Cachorro',e:'🐶',c:'Comida a Granel'},
+        {n:'Dog Chow Cachorro',e:'🐶',c:'Comida a Granel'},{n:'Mirringo',e:'🌾',c:'Comida a Granel'},
+        {n:'Don Kat',e:'🌾',c:'Comida a Granel'},{n:'Chunky Gato',e:'🌾',c:'Comida a Granel'},
+        {n:'Cat Chow',e:'🌾',c:'Comida a Granel'},{n:'Don Kat Gatito',e:'🐱',c:'Comida a Granel'},
+        {n:'Dog Chow Raza Pequeña',e:'📦',c:'Comida en Paquete'},{n:'BR Perro',e:'📦',c:'Comida en Paquete'},
+        {n:'BR Gatito',e:'📦',c:'Comida en Paquete'},{n:'BR Gato Adulto',e:'📦',c:'Comida en Paquete'},
+        {n:'BR Gato Castrado',e:'📦',c:'Comida en Paquete'},{n:'Cremoso Gato Paq x5',e:'🥩',c:'Comida en Paquete'},
+        {n:'Sobre Felix',e:'🥩',c:'Comida en Paquete'},{n:'Lata Felix',e:'🥫',c:'Comida en Paquete'},
+        {n:'Arena Calabaza',e:'🎃',c:'Arena Gato'},{n:'Arena Maíz',e:'🌽',c:'Arena Gato'},
+        {n:'Arena Tofu',e:'🌿',c:'Arena Gato'},{n:'Costillas Ahumadas',e:'🍖',c:'Snacks'},
+        {n:'Orejas Cerdo',e:'🐷',c:'Snacks'},{n:'Pudines Gato',e:'🍮',c:'Snacks'},
+        {n:'Gimnasio Gato',e:'🏠',c:'Accesorios'},{n:'Catnip',e:'🌿',c:'Accesorios'},
+        {n:'Collar Perro con Luz',e:'💡',c:'Accesorios'},{n:'Cortauñas Sencillo',e:'✂️',c:'Accesorios'},
+        {n:'Guacal Pequeño',e:'🏠',c:'Platos y Guacales'},{n:'Fuente Agua Eléctrica',e:'⛲',c:'Platos y Guacales'},
+        {n:'Plato Antirreflujo Grande',e:'🍽️',c:'Platos y Guacales'},{n:'Antipulgas Pipeta',e:'🐛',c:'Medicamentos'},
+        {n:'Shampú Famo',e:'🧴',c:'Medicamentos'},{n:'Vitamina Pelo',e:'💇',c:'Medicamentos'},
+        {n:'Pañal Perro',e:'🩲',c:'Medicamentos'},{n:'Cono Isabelino',e:'🔵',c:'Medicamentos'},
+    ];
+
+    // ── CARRITO ──
+    let carrito = [];
+
+    function addCarrito(nombre, cat, btn) {
+        carrito.push({ nombre, cat });
+        btn.textContent = '✓';
+        btn.classList.add('agregado');
+        setTimeout(() => { btn.textContent = '+'; btn.classList.remove('agregado'); }, 1200);
+        actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+        const n = carrito.length;
+        const flotante = document.getElementById('carrito-flotante');
+        document.getElementById('carrito-count-txt').textContent = n + (n === 1 ? ' producto' : ' productos');
+        flotante.classList.toggle('visible', n > 0);
+        document.querySelectorAll('.carrito-badge').forEach(b => b.textContent = n);
+    }
+
+    function renderCarrito() {
+        const lista = document.getElementById('carrito-lista');
+        const vacio = document.getElementById('carrito-vacio');
+        const acciones = document.getElementById('carrito-acciones');
+        if (carrito.length === 0) {
+            lista.innerHTML = '';
+            vacio.style.display = 'block';
+            acciones.style.display = 'none';
+            return;
+        }
+        vacio.style.display = 'none';
+        acciones.style.display = 'block';
+        lista.innerHTML = carrito.map((item, i) => `
+            <div class="carrito-item">
+                <div class="carrito-item-info">
+                    <div class="carrito-item-nombre">${item.nombre}</div>
+                    <div class="carrito-item-cat">📦 ${item.cat}</div>
+                </div>
+                <button class="btn-quitar" onclick="quitarItem(${i})">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function quitarItem(i) {
+        carrito.splice(i, 1);
+        actualizarCarrito();
+        renderCarrito();
+    }
+
+    function vaciarCarrito() {
+        carrito = [];
+        actualizarCarrito();
+        renderCarrito();
+    }
+
+    function enviarPedido() {
+        if (carrito.length === 0) return;
+        const lista = carrito.map((item, i) => `${i+1}. ${item.nombre}`).join('%0A');
+        const msg = `Hola Mas Motas! 🐾 Me gustaría hacer el siguiente pedido:%0A%0A${lista}%0A%0APor favor me confirman disponibilidad y precio total. ¡Gracias!`;
+        window.open(`https://wa.me/573138585000?text=${msg}`, '_blank');
+    }
+
+    // ── BÚSQUEDA ──
+    function buscar(q) {
+        const res = document.getElementById('buscador-resultados');
+        if (!q || q.length < 2) { res.style.display = 'none'; return; }
+        const filtrados = todosProductos.filter(p => p.n.toLowerCase().includes(q.toLowerCase())).slice(0, 8);
+        if (filtrados.length === 0) { res.style.display = 'none'; return; }
+        res.innerHTML = filtrados.map(p => `
+            <div class="busq-item">
+                <span class="busq-emoji">${p.e}</span>
+                <div class="busq-info">
+                    <div class="busq-nombre">${p.n}</div>
+                    <div class="busq-cat">${p.c}</div>
+                </div>
+                <button class="busq-add" onclick="addCarritoDesde('${p.n}','${p.c}',this)">+</button>
+            </div>
+        `).join('');
+        res.style.display = 'block';
+    }
+
+    function addCarritoDesde(nombre, cat, btn) {
+        carrito.push({ nombre, cat });
+        btn.textContent = '✓';
+        btn.style.background = '#4CAF50';
+        setTimeout(() => { btn.textContent = '+'; btn.style.background = ''; }, 1200);
+        actualizarCarrito();
+    }
+
+    // Cerrar buscador al tocar fuera
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.buscador-box')) {
+            document.getElementById('buscador-resultados').style.display = 'none';
+        }
+    });
+
+    // ── FILTROS CATEGORÍA ──
+    function filtrarCat(btn, tipo, pantalla) {
+        const pantallEl = document.getElementById('pantalla-' + pantalla);
+        pantallEl.querySelectorAll('.filtro-cat-btn').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+        pantallEl.querySelectorAll('.producto-item').forEach(item => {
+            const t = item.dataset.tipo;
+            item.classList.toggle('oculto', tipo !== 'todos' && t !== tipo && t !== 'ambos');
+        });
+    }
+
+    // ── NAVEGACIÓN ──
+    function mostrarPantalla(id) {
+        document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+        document.getElementById(id).classList.add('activa');
+        window.scrollTo(0, 0);
+        if (id === 'pantalla-carrito') renderCarrito();
+    }
+
+    function mostrarCat(cat) { mostrarPantalla('pantalla-' + cat); }
+</script>
+</body>
+</html>
